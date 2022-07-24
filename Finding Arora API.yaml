@@ -1,0 +1,179 @@
+openapi: "3.0.0"
+
+info:
+  description: "Finding Aurora API lets us find information about past and future northern lights in Manitoba by taking inputs such as location and time. The northern lights, aka Aurora, are mesmerizing waves of light that are known for their beauty that can be seen often during winter times. This API provides us information such as the KP index, which describes characteristics of the current aurora."
+  version: 2.1.0
+  title: Finding Auroras
+  
+servers:
+  - url: http://auroraapi.org
+    description: The main server of the application.
+
+paths:
+  /location:
+    get:
+      tags:
+        - location
+      summary: List all aurora events based on location
+      operationId: auroralocation
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          description: The latitude of the location in Manitoba
+          schema:
+            type: number
+            example: 49.8951
+        - name: long
+          in: query
+          required: true
+          description: The longitude of the location in Manitoba
+          schema:
+            type: number
+            example: 97.1384
+      responses:
+        '200':
+          description: List of aurora events based on location.
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Aurora"
+        '400':
+          description: No aurora event found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/400"
+        '404':
+          description: Error in Input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/404"
+  
+  /time:
+    get:
+      tags:
+        - time
+      summary: List of aurora events based on time
+      operationId: auroratime
+      parameters:
+        - name: time
+          in: query
+          required: true
+          description: The time an aurora occurred
+          schema:
+            type: string
+            example: "2021-11-19T00:07:52-06:00"
+      responses:
+        '200':
+          description: List of aurora events based on time
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Aurora"
+        '400':
+          description: No aurora event found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/400"
+        '404':
+          description: Error in Input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/404"
+  
+  /photo:
+    get:
+      tags:
+        - photo
+      summary: Get a photo
+      operationId: getphoto
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          description: The latitude of the location in Manitoba
+          schema:
+            type: number
+            example: 49.8951
+        - name: long
+          in: query
+          required: true
+          description: The longitude of the location in Manitoba
+          schema:
+            type: number
+            example: 97.1384
+      responses:
+        '500':
+          description: Link to photo of aurora event (Successful response)
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/500"
+        '400':
+          description: No aurora event found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/400"
+        '404':
+          description: Error in Input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/404"
+
+components:
+  schemas:
+    Aurora:
+      description: List of aurora events 
+      properties:
+        Time:
+          type: string
+          example: "2021-11-19T00:07:52-06:00"
+        Location:
+          type: string
+          example: "Lat: 49.8951, Long: 97.1384"
+        Length:
+          type: number
+          example: 20
+        KP:
+          type: number
+          example: 2
+    400:
+      description: No aurora event found. (Successful response)
+      properties:
+        Message:
+          type: string
+          example: "No aurora event found."
+    404:
+      description: Error in Input. (Unsuccessful response)
+      properties:
+        Error Message:
+          type: string
+          example: "Error in Input."
+        Error Code: 
+          type: integer
+          example: 404
+    500:
+      description: Link to photo of aurora events 
+      properties:
+        URL:
+          type: string
+          example: "https://imagesite.com/image.png"
+        Time:
+          type: string
+          example: "2021-11-19T00:07:52-06:00"
+        Location:
+          type: string
+          example: "Lat: 49.8951, Long: 97.1384"
+        Length:
+          type: number
+          example: 20
+        KP:
+          type: number
+          example: 2
+    
